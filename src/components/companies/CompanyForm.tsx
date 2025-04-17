@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Company, companyService } from "@/lib/airtable";
-import { SECTOR_OPTIONS, STATUS_OPTIONS } from "@/lib/types";
+import { SECTOR_OPTIONS, STATUS_OPTIONS, CompanyStatus } from "@/lib/types";
 import { toast } from "@/components/ui/sonner";
 
 // Company form schema
@@ -32,7 +32,16 @@ const companyFormSchema = z.object({
   Sector: z.string().min(1, "Sector is required"),
   "Estimated Revenue": z.string().optional(),
   Location: z.string().optional(),
-  Status: z.string().min(1, "Status is required"),
+  Status: z.enum([
+    "Contacted", 
+    "In Analysis", 
+    "LOI Sent", 
+    "Due Diligence", 
+    "Closed", 
+    "Archived"
+  ], {
+    required_error: "Status is required"
+  }),
   Website: z.string().url("Please enter a valid URL").or(z.string().length(0)).optional(),
   Notes: z.string().optional(),
 });
@@ -75,6 +84,7 @@ const CompanyForm = ({ company, onSuccess }: CompanyFormProps) => {
         "Estimated Revenue": data["Estimated Revenue"] 
           ? parseInt(data["Estimated Revenue"], 10) 
           : undefined,
+        Status: data.Status as CompanyStatus
       };
 
       let result;
@@ -89,9 +99,9 @@ const CompanyForm = ({ company, onSuccess }: CompanyFormProps) => {
       } else {
         navigate(`/companies/${result.id}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting form:", error);
-      toast.error("Failed to save company");
+      toast.error(`Failed to save company`);
     } finally {
       setIsSubmitting(false);
     }
