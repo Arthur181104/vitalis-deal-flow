@@ -2,6 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/sonner";
 import { CompanyStatus } from "./types";
+import { Database } from "@/integrations/supabase/types";
 
 export interface Company {
   id: string;
@@ -38,11 +39,13 @@ export interface Comment {
   };
 }
 
+// Type definition for Supabase company data
+type CompanyRow = Database['public']['Tables']['companies']['Row'];
+
 // Companies API
 export const companyService = {
   async getCompanies(filterByFormula: string = "") {
     try {
-      // Por enquanto, continua utilizando o objeto Airtable, até migrarmos completamente para Supabase
       const { data: companies, error } = await supabase
         .from('companies')
         .select('*');
@@ -57,10 +60,10 @@ export const companyService = {
           Sector: company.sector,
           "Estimated Revenue": company.estimated_revenue,
           Location: company.location,
-          Status: company.status,
+          Status: company.status as CompanyStatus,
           Website: company.website,
           Notes: company.notes,
-          CreatedTime: company.created_at
+          CreatedTime: company.created_at || new Date().toISOString()
         }
       })) as Company[];
     } catch (error: any) {
@@ -79,6 +82,7 @@ export const companyService = {
         .single();
         
       if (error) throw error;
+      if (!company) throw new Error("Company not found");
       
       // Adapta o formato do Supabase para o formato esperado pelo frontend
       return {
@@ -91,7 +95,7 @@ export const companyService = {
           Status: company.status as CompanyStatus,
           Website: company.website,
           Notes: company.notes,
-          CreatedTime: company.created_at
+          CreatedTime: company.created_at || new Date().toISOString()
         }
       } as Company;
     } catch (error: any) {
@@ -107,11 +111,11 @@ export const companyService = {
       const { data: company, error } = await supabase
         .from('companies')
         .insert({
-          name: data.Name,
-          sector: data.Sector,
+          name: data.Name || '',
+          sector: data.Sector || '',
           estimated_revenue: data["Estimated Revenue"],
           location: data.Location,
-          status: data.Status,
+          status: data.Status || 'Contacted',
           website: data.Website,
           notes: data.Notes
         })
@@ -119,6 +123,7 @@ export const companyService = {
         .single();
         
       if (error) throw error;
+      if (!company) throw new Error("Failed to create company");
       
       toast.success("Company created successfully");
       
@@ -133,7 +138,7 @@ export const companyService = {
           Status: company.status as CompanyStatus,
           Website: company.website,
           Notes: company.notes,
-          CreatedTime: company.created_at
+          CreatedTime: company.created_at || new Date().toISOString()
         }
       } as Company;
     } catch (error: any) {
@@ -162,6 +167,7 @@ export const companyService = {
         .single();
         
       if (error) throw error;
+      if (!company) throw new Error("Failed to update company");
       
       toast.success("Company updated successfully");
       
@@ -176,7 +182,7 @@ export const companyService = {
           Status: company.status as CompanyStatus,
           Website: company.website,
           Notes: company.notes,
-          CreatedTime: company.created_at
+          CreatedTime: company.created_at || new Date().toISOString()
         }
       } as Company;
     } catch (error: any) {

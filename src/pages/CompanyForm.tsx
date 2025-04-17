@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/layout/Layout";
 import PageHeader from "@/components/shared/PageHeader";
 import CompanyFormComponent from "@/components/companies/CompanyForm";
-import { companyService, Company } from "@/lib/airtable";
+import { companyService, Company } from "@/lib/supabase";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
