@@ -1,15 +1,10 @@
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/layout/Layout";
 import PageHeader from "@/components/shared/PageHeader";
 import StatusBadge from "@/components/shared/StatusBadge";
-import InteractionForm from "@/components/interactions/InteractionForm";
-import InteractionList from "@/components/interactions/InteractionList";
-import CommentForm from "@/components/comments/CommentForm";
-import CommentList from "@/components/comments/CommentList";
-import { companyService, interactionService, commentService } from "@/lib/airtable";
+import { companyService } from "@/lib/supabase";
 import { formatCurrency, STATUS_OPTIONS } from "@/lib/types";
 import {
   Tabs,
@@ -45,7 +40,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const CompanyDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -60,28 +55,6 @@ const CompanyDetails = () => {
   } = useQuery({
     queryKey: ["company", id],
     queryFn: () => companyService.getCompanyById(id!),
-    enabled: !!id,
-  });
-
-  // Fetch interactions for the company
-  const {
-    data: interactions,
-    isLoading: isLoadingInteractions,
-    refetch: refetchInteractions,
-  } = useQuery({
-    queryKey: ["interactions", id],
-    queryFn: () => interactionService.getInteractionsByCompany(id!),
-    enabled: !!id,
-  });
-
-  // Fetch comments for the company
-  const {
-    data: comments,
-    isLoading: isLoadingComments,
-    refetch: refetchComments,
-  } = useQuery({
-    queryKey: ["comments", id],
-    queryFn: () => commentService.getCommentsByCompany(id!),
     enabled: !!id,
   });
 

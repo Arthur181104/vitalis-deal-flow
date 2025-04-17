@@ -7,7 +7,7 @@ import PageHeader from "@/components/shared/PageHeader";
 import CompanyFilter from "@/components/companies/CompanyFilter";
 import CompanyListItem from "@/components/companies/CompanyListItem";
 import { Table, TableHeader, TableRow, TableHead, TableBody } from "@/components/ui/table";
-import { companyService, Company } from "@/lib/airtable";
+import { companyService, Company } from "@/lib/supabase";
 import { Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 

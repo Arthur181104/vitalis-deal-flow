@@ -22,9 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Company, companyService } from "@/lib/airtable";
+import { Company, companyService } from "@/lib/supabase";
 import { SECTOR_OPTIONS, STATUS_OPTIONS, CompanyStatus } from "@/lib/types";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 // Company form schema
 const companyFormSchema = z.object({

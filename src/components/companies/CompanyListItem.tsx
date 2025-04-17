@@ -1,5 +1,5 @@
 
-import { Company } from "@/lib/airtable";
+import { Company } from "@/lib/supabase";
 import { formatCurrency } from "@/lib/types";
 import StatusBadge from "@/components/shared/StatusBadge";
 import { TableRow, TableCell } from "@/components/ui/table";
