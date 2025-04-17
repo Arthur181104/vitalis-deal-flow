@@ -24,7 +24,7 @@ const CompanyFilter = () => {
   const [search, setSearch] = useState(currentSearch);
 
   const handleStatusChange = (value: string) => {
-    if (value === "") {
+    if (value === "all") {
       searchParams.delete("status");
     } else {
       searchParams.set("status", value);
@@ -33,7 +33,7 @@ const CompanyFilter = () => {
   };
 
   const handleSectorChange = (value: string) => {
-    if (value === "") {
+    if (value === "all") {
       searchParams.delete("sector");
     } else {
       searchParams.set("sector", value);
@@ -61,12 +61,12 @@ const CompanyFilter = () => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Select value={currentStatus} onValueChange={handleStatusChange}>
+        <Select value={currentStatus || "all"} onValueChange={handleStatusChange}>
           <SelectTrigger>
             <SelectValue placeholder="Filter by Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
+            <SelectItem value="all">All Statuses</SelectItem>
             {STATUS_OPTIONS.map((status) => (
               <SelectItem key={status.value} value={status.value}>
                 {status.label}
@@ -75,12 +75,12 @@ const CompanyFilter = () => {
           </SelectContent>
         </Select>
 
-        <Select value={currentSector} onValueChange={handleSectorChange}>
+        <Select value={currentSector || "all"} onValueChange={handleSectorChange}>
           <SelectTrigger>
             <SelectValue placeholder="Filter by Sector" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Sectors</SelectItem>
+            <SelectItem value="all">All Sectors</SelectItem>
             {SECTOR_OPTIONS.map((sector) => (
               <SelectItem key={sector.value} value={sector.value}>
                 {sector.label}
