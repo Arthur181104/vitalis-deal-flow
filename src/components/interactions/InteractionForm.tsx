@@ -28,10 +28,10 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { interactionService } from "@/lib/airtable";
+import { interactionService } from "@/lib/supabase";
 import { INTERACTION_TYPE_OPTIONS } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 // Interaction form schema
 const interactionFormSchema = z.object({

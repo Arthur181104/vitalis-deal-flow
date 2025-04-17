@@ -1,5 +1,5 @@
 
-import { Comment } from "@/lib/airtable";
+import { Comment } from "@/lib/supabase";
 import { formatDate } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";

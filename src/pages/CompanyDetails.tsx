@@ -1,9 +1,14 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/layout/Layout";
 import PageHeader from "@/components/shared/PageHeader";
 import StatusBadge from "@/components/shared/StatusBadge";
+import InteractionForm from "@/components/interactions/InteractionForm";
+import InteractionList from "@/components/interactions/InteractionList";
+import CommentForm from "@/components/comments/CommentForm";
+import CommentList from "@/components/comments/CommentList";
 import { companyService } from "@/lib/supabase";
 import { formatCurrency, STATUS_OPTIONS } from "@/lib/types";
 import {
@@ -55,6 +60,35 @@ const CompanyDetails = () => {
   } = useQuery({
     queryKey: ["company", id],
     queryFn: () => companyService.getCompanyById(id!),
+    enabled: !!id,
+  });
+
+  // Declare interactions and comments queries
+  const {
+    data: interactions = [],
+    isLoading: isLoadingInteractions,
+    refetch: refetchInteractions
+  } = useQuery({
+    queryKey: ["interactions", id],
+    queryFn: async () => {
+      // This function will need to be implemented in the interactions service
+      // For now, let's return an empty array to avoid errors
+      return [];
+    },
+    enabled: !!id,
+  });
+
+  const {
+    data: comments = [],
+    isLoading: isLoadingComments,
+    refetch: refetchComments
+  } = useQuery({
+    queryKey: ["comments", id],
+    queryFn: async () => {
+      // This function will need to be implemented in the comments service
+      // For now, let's return an empty array to avoid errors
+      return [];
+    },
     enabled: !!id,
   });
 

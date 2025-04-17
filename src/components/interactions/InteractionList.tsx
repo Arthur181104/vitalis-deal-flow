@@ -1,5 +1,5 @@
 
-import { Interaction } from "@/lib/airtable";
+import { Interaction } from "@/lib/supabase";
 import { formatDate } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, Users, HelpCircle } from "lucide-react";

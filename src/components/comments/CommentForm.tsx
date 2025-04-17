@@ -12,8 +12,8 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { commentService } from "@/lib/airtable";
-import { toast } from "@/components/ui/sonner";
+import { commentService } from "@/lib/supabase";
+import { toast } from "sonner";
 
 // Comment form schema
 const commentFormSchema = z.object({
