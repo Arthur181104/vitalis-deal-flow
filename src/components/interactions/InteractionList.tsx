@@ -2,7 +2,7 @@
 import { Interaction } from "@/lib/supabase";
 import { formatDate } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Phone, Mail, Users, HelpCircle } from "lucide-react";
+import { Phone, Mail, Users, HelpCircle, Calendar } from "lucide-react";
 
 interface InteractionListProps {
   interactions: Interaction[];
@@ -11,7 +11,8 @@ interface InteractionListProps {
 const InteractionList = ({ interactions }: InteractionListProps) => {
   if (interactions.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="text-center py-8 text-muted-foreground flex flex-col items-center gap-2">
+        <Calendar className="h-12 w-12 text-muted-foreground/50" />
         <p>No interactions recorded yet.</p>
       </div>
     );
@@ -34,7 +35,7 @@ const InteractionList = ({ interactions }: InteractionListProps) => {
   return (
     <div className="space-y-4">
       {interactions.map((interaction) => (
-        <Card key={interaction.id}>
+        <Card key={interaction.id} className="hover:shadow-sm transition-all duration-300">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -45,7 +46,8 @@ const InteractionList = ({ interactions }: InteractionListProps) => {
                   {interaction.fields.Type}
                 </CardTitle>
               </div>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
                 {formatDate(interaction.fields.Date)}
               </span>
             </div>

@@ -18,9 +18,14 @@ const PipelineChart = ({ data }: PipelineChartProps) => {
     }));
 
   return (
-    <Card className="col-span-3">
+    <Card className="col-span-3 shadow-sm hover:shadow-md transition-all duration-300">
       <CardHeader>
-        <CardTitle>Deal Pipeline</CardTitle>
+        <CardTitle className="flex items-center justify-between">
+          <span>Deal Pipeline</span>
+          <span className="text-sm font-normal text-muted-foreground">
+            {Object.values(data).reduce((acc, val) => acc + val, 0)} Total
+          </span>
+        </CardTitle>
       </CardHeader>
       <CardContent className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
@@ -34,12 +39,19 @@ const PipelineChart = ({ data }: PipelineChartProps) => {
             <Tooltip 
               formatter={(value: number) => [`${value} Companies`, "Count"]}
               labelStyle={{ color: "#333" }}
+              contentStyle={{ borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
             />
-            <Bar dataKey="value" fill="#9b87f5" radius={[4, 4, 0, 0]}>
-              {chartData.map((entry, index) => (
-                <Bar key={index} dataKey="value" fill={entry.color} />
-              ))}
-            </Bar>
+            {chartData.map((entry, index) => (
+              <Bar 
+                key={`bar-${index}`} 
+                dataKey="value" 
+                name={entry.name}
+                fill={entry.color} 
+                radius={[4, 4, 0, 0]}
+                animationDuration={1500}
+                animationBegin={index * 150}
+              />
+            ))}
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

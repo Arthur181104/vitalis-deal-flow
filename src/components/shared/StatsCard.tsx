@@ -17,10 +17,10 @@ interface StatsCardProps {
 
 const StatsCard = ({ title, value, icon: Icon, description, trend, className }: StatsCardProps) => {
   return (
-    <Card className={className}>
+    <Card className={`transition-all duration-300 hover:shadow-md ${className || ""}`}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
+        {Icon && <Icon className="h-5 w-5 text-muted-foreground" />}
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>

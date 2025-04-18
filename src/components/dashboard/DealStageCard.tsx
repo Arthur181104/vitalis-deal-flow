@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CompanyStatus, STATUS_OPTIONS } from "@/lib/types";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 interface DealStageCardProps {
   status: CompanyStatus;
@@ -20,9 +21,12 @@ const DealStageCard = ({ status, count }: DealStageCardProps) => {
 
   return (
     <Link to={`/companies?filter=${filterQuery}`}>
-      <Card className="hover:shadow-md transition-shadow">
+      <Card className="hover:shadow-md transition-all duration-300 hover:translate-y-[-2px] group">
         <CardHeader className="pb-2" style={{ borderBottom: `3px solid ${statusInfo.color}` }}>
-          <CardTitle className="text-sm font-medium">{statusInfo.label}</CardTitle>
+          <CardTitle className="text-sm font-medium flex items-center justify-between">
+            {statusInfo.label}
+            <ArrowRight size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="text-3xl font-bold">{count}</div>

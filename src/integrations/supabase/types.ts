@@ -9,38 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      comments: {
-        Row: {
-          author: string | null
-          company_id: string | null
-          content: string
-          created_at: string | null
-          id: string
-        }
-        Insert: {
-          author?: string | null
-          company_id?: string | null
-          content: string
-          created_at?: string | null
-          id?: string
-        }
-        Update: {
-          author?: string | null
-          company_id?: string | null
-          content?: string
-          created_at?: string | null
-          id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "comments_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       companies: {
         Row: {
           created_at: string | null
@@ -79,41 +47,6 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
-      }
-      interactions: {
-        Row: {
-          company_id: string | null
-          created_at: string | null
-          date: string
-          id: string
-          notes: string | null
-          type: string
-        }
-        Insert: {
-          company_id?: string | null
-          created_at?: string | null
-          date: string
-          id?: string
-          notes?: string | null
-          type: string
-        }
-        Update: {
-          company_id?: string | null
-          created_at?: string | null
-          date?: string
-          id?: string
-          notes?: string | null
-          type?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "interactions_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {

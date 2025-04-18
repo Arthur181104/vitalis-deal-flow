@@ -4,6 +4,7 @@ import { Company } from "@/lib/airtable";
 import { formatDate } from "@/lib/types";
 import StatusBadge from "@/components/shared/StatusBadge";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 interface RecentCompaniesProps {
   companies: Company[];
@@ -16,9 +17,16 @@ const RecentCompanies = ({ companies }: RecentCompaniesProps) => {
     .slice(0, 5);
 
   return (
-    <Card className="col-span-3 md:col-span-2">
-      <CardHeader>
+    <Card className="col-span-3 md:col-span-2 shadow-sm hover:shadow-md transition-all duration-300">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle>Recently Added Companies</CardTitle>
+        <Link 
+          to="/companies" 
+          className="text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+        >
+          <span>View all</span>
+          <ArrowRight size={16} />
+        </Link>
       </CardHeader>
       <CardContent>
         {recentCompanies.length === 0 ? (
@@ -26,7 +34,7 @@ const RecentCompanies = ({ companies }: RecentCompaniesProps) => {
         ) : (
           <div className="space-y-4">
             {recentCompanies.map((company) => (
-              <div key={company.id} className="flex items-center justify-between">
+              <div key={company.id} className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50 transition-colors">
                 <div className="space-y-1">
                   <Link 
                     to={`/companies/${company.id}`}
@@ -43,14 +51,6 @@ const RecentCompanies = ({ companies }: RecentCompaniesProps) => {
             ))}
           </div>
         )}
-        <div className="mt-4 pt-4 border-t">
-          <Link 
-            to="/companies" 
-            className="text-sm text-primary hover:text-primary/80 transition-colors"
-          >
-            View all companies →
-          </Link>
-        </div>
       </CardContent>
     </Card>
   );

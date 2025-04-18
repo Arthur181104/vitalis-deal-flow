@@ -3,6 +3,7 @@ import { Comment } from "@/lib/supabase";
 import { formatDate } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { MessageSquare } from "lucide-react";
 
 interface CommentListProps {
   comments: Comment[];
@@ -11,7 +12,8 @@ interface CommentListProps {
 const CommentList = ({ comments }: CommentListProps) => {
   if (comments.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="text-center py-8 text-muted-foreground flex flex-col items-center gap-2">
+        <MessageSquare className="h-12 w-12 text-muted-foreground/50" />
         <p>No comments yet.</p>
       </div>
     );
@@ -20,7 +22,7 @@ const CommentList = ({ comments }: CommentListProps) => {
   return (
     <div className="space-y-4">
       {comments.map((comment) => (
-        <Card key={comment.id}>
+        <Card key={comment.id} className="hover:shadow-sm transition-all duration-300">
           <CardContent className="pt-4">
             <div className="flex items-start gap-4">
               <Avatar className="h-8 w-8">

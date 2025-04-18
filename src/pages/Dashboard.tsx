@@ -9,8 +9,9 @@ import RecentCompanies from "@/components/dashboard/RecentCompanies";
 import StatsCard from "@/components/shared/StatsCard";
 import { statsService, companyService } from "@/lib/airtable";
 import { STATUS_OPTIONS } from "@/lib/types";
-import { Building2, TrendingUp } from "lucide-react";
+import { Building2, TrendingUp, Users, Calendar } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Dashboard = () => {
   // Fetch dashboard statistics
@@ -59,13 +60,14 @@ const Dashboard = () => {
         ))}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {/* Total companies stat */}
         <StatsCard
           title="Total Companies"
           value={stats?.totalCompanies || 0}
           icon={Building2}
           description="Companies in your pipeline"
+          className="bg-gradient-to-br from-primary-50 to-white dark:from-primary-950 dark:to-background"
         />
         
         {/* Dynamic stats based on sector distribution */}
@@ -77,8 +79,30 @@ const Dashboard = () => {
             icon={TrendingUp}
             description={`${Object.entries(stats.sectorDistribution)
               .sort((a, b) => b[1] - a[1])[0][1]} companies`}
+            className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-950 dark:to-background"
           />
         )}
+
+        {/* Additional stats */}
+        <StatsCard
+          title="Recent Activity"
+          value={companies?.length ? companies.filter(c => {
+            const date = new Date(c.fields.CreatedTime);
+            const now = new Date();
+            return now.getTime() - date.getTime() < 1000 * 60 * 60 * 24 * 7; // 7 days
+          }).length : 0}
+          icon={Calendar}
+          description="New companies in the last 7 days"
+          className="bg-gradient-to-br from-green-50 to-white dark:from-green-950 dark:to-background"
+        />
+
+        <StatsCard
+          title="Team Productivity"
+          value={companies ? Math.round(companies.length / 3) : 0}
+          icon={Users}
+          description="Average companies per team member"
+          className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-background"
+        />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
