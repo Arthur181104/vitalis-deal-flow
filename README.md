@@ -1,73 +1,41 @@
-# Welcome to your Lovable project
+# Vitalis – Search Fund CRM
 
-## Project info
+> Plataforma desenvolvida para organizar, priorizar e registrar a jornada de aquisição de empresas no contexto de um Search Fund. Construída com Lovable e Supabase, o MVP do Vitalis funciona como um “Diário do Empreendedor”, centralizando as interações, empresas analisadas e decisões estratégicas.
 
-**URL**: https://lovable.dev/projects/51a20c07-309f-4136-84e7-01804c9a2f26
+---
 
-## How can I edit this code?
+## Visão Geral
 
-There are several ways of editing your application.
+**Vitalis** desenvolveu uma plataforma voltada para operadores de search funds, auxiliando na gestão do pipeline de deals e na organização de oportunidades de aquisição. O aplicativo permite registrar empresas-alvo, acompanhar o progresso de cada negociação, documentar interações e refletir sobre aprendizados ao longo da jornada.
 
-**Use Lovable**
+Este repositório contém o código da interface front-end construída com o Lovable, além da conexão com a base de dados no Supabase, utilizada para armazenar as informações dos deals e interações registradas.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/51a20c07-309f-4136-84e7-01804c9a2f26) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## Funcionalidades
 
-**Use your preferred IDE**
+- **Cadastro de Empresas**: formulário com campos como nome, setor, receita estimada, status e notas.
+- **Lista de Deals**: visualização completa com filtros por status e setor.
+- **Detalhe da Empresa**: exibição de informações completas da empresa, com histórico de interações e comentários.
+- **Registro de Interações**: formulário com tipo (call, reunião, e-mail), data e observações.
+- **Atualização de Status**: controle das etapas do funil de aquisição.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Tecnologias Utilizadas
 
-Follow these steps:
+- **Lovable**: plataforma no-code para criação da interface do MVP.
+- **Supabase**: backend que armazena os dados estruturados do CRM em tempo real.
+- **GitHub**: versionamento do projeto e documentação da aplicação.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Links Importantes
 
-# Step 3: Install the necessary dependencies.
-npm i
+- 🔗 Acesso ao MVP: https://vitalis-deal-flow.lovable.app/companies/new 
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
 
-**Use GitHub Codespaces**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/51a20c07-309f-4136-84e7-01804c9a2f26) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
