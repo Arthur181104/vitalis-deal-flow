@@ -211,140 +211,49 @@ export const companyService = {
   },
 };
 
-// Interaction service for Supabase
+// Temporary mock implementations for interaction and comment services
+// These will need proper implementations when the tables are created in Supabase
 export const interactionService = {
   async getInteractionsByCompany(companyId: string): Promise<Interaction[]> {
-    try {
-      const { data: interactions, error } = await supabase
-        .from('interactions')
-        .select('*')
-        .eq('company_id', companyId);
-      
-      if (error) throw error;
-      
-      // Transform Supabase format to our application format
-      return (interactions || []).map(interaction => ({
-        id: interaction.id,
-        fields: {
-          Date: interaction.date || '',
-          Type: interaction.type as "Call" | "Email" | "Meeting" | "Other",
-          Notes: interaction.notes,
-          CompanyId: [companyId],
-          CreatedTime: interaction.created_at || new Date().toISOString()
-        }
-      }));
-    } catch (error: any) {
-      console.error("Error fetching interactions:", error);
-      toast.error(`Error fetching interactions: ${error.message}`);
-      return [];
-    }
+    // Mock implementation - return empty array for now
+    console.log("Mock interactionService.getInteractionsByCompany called", companyId);
+    return [];
   },
 
   async createInteraction(data: Partial<Omit<Interaction["fields"], "CreatedTime"> & { CompanyId: string[] }>): Promise<Interaction> {
-    try {
-      // Extract company ID from the array
-      const companyId = data.CompanyId && data.CompanyId.length > 0 ? data.CompanyId[0] : null;
-      
-      if (!companyId) throw new Error("Company ID is required");
-      
-      const { data: interaction, error } = await supabase
-        .from('interactions')
-        .insert({
-          date: data.Date,
-          type: data.Type || 'Other',
-          notes: data.Notes,
-          company_id: companyId
-        })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      if (!interaction) throw new Error("Failed to create interaction");
-      
-      toast.success("Interaction logged successfully");
-      
-      return {
-        id: interaction.id,
-        fields: {
-          Date: interaction.date || '',
-          Type: interaction.type as "Call" | "Email" | "Meeting" | "Other",
-          Notes: interaction.notes,
-          CompanyId: [companyId],
-          CreatedTime: interaction.created_at || new Date().toISOString()
-        }
-      };
-    } catch (error: any) {
-      console.error("Error creating interaction:", error);
-      toast.error(`Error creating interaction: ${error.message}`);
-      throw error;
-    }
+    // Mock implementation - return mock data
+    console.log("Mock interactionService.createInteraction called", data);
+    return {
+      id: "mock-id",
+      fields: {
+        Date: data.Date || new Date().toISOString(),
+        Type: data.Type || "Other",
+        Notes: data.Notes,
+        CompanyId: data.CompanyId || [],
+        CreatedTime: new Date().toISOString()
+      }
+    };
   }
 };
 
-// Comment service for Supabase
 export const commentService = {
   async getCommentsByCompany(companyId: string): Promise<Comment[]> {
-    try {
-      const { data: comments, error } = await supabase
-        .from('comments')
-        .select('*')
-        .eq('company_id', companyId);
-      
-      if (error) throw error;
-      
-      // Transform Supabase format to our application format
-      return (comments || []).map(comment => ({
-        id: comment.id,
-        fields: {
-          Content: comment.content || '',
-          CompanyId: [companyId],
-          Author: comment.author,
-          CreatedTime: comment.created_at || new Date().toISOString()
-        }
-      }));
-    } catch (error: any) {
-      console.error("Error fetching comments:", error);
-      toast.error(`Error fetching comments: ${error.message}`);
-      return [];
-    }
+    // Mock implementation - return empty array for now
+    console.log("Mock commentService.getCommentsByCompany called", companyId);
+    return [];
   },
 
   async createComment(data: Partial<Omit<Comment["fields"], "CreatedTime"> & { CompanyId: string[] }>): Promise<Comment> {
-    try {
-      // Extract company ID from the array
-      const companyId = data.CompanyId && data.CompanyId.length > 0 ? data.CompanyId[0] : null;
-      
-      if (!companyId) throw new Error("Company ID is required");
-      if (!data.Content) throw new Error("Comment content is required");
-      
-      const { data: comment, error } = await supabase
-        .from('comments')
-        .insert({
-          content: data.Content,
-          author: data.Author,
-          company_id: companyId
-        })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      if (!comment) throw new Error("Failed to create comment");
-      
-      toast.success("Comment added successfully");
-      
-      return {
-        id: comment.id,
-        fields: {
-          Content: comment.content || '',
-          CompanyId: [companyId],
-          Author: comment.author,
-          CreatedTime: comment.created_at || new Date().toISOString()
-        }
-      };
-    } catch (error: any) {
-      console.error("Error creating comment:", error);
-      toast.error(`Error creating comment: ${error.message}`);
-      throw error;
-    }
+    // Mock implementation - return mock data
+    console.log("Mock commentService.createComment called", data);
+    return {
+      id: "mock-id",
+      fields: {
+        Content: data.Content || "",
+        CompanyId: data.CompanyId || [],
+        Author: data.Author,
+        CreatedTime: new Date().toISOString()
+      }
+    };
   }
 };

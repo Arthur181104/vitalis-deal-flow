@@ -7,11 +7,11 @@ import DealStageCard from "@/components/dashboard/DealStageCard";
 import PipelineChart from "@/components/dashboard/PipelineChart";
 import RecentCompanies from "@/components/dashboard/RecentCompanies";
 import StatsCard from "@/components/shared/StatsCard";
-import { statsService, companyService } from "@/lib/airtable";
+import { companyService } from "@/lib/supabase";
+import { statsService } from "@/lib/statsService";
 import { STATUS_OPTIONS } from "@/lib/types";
 import { Building2, TrendingUp, Users, Calendar } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Dashboard = () => {
   // Fetch dashboard statistics
