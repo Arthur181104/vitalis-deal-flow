@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CompanyStatus, CompanyRating, CompanyApprovalStatus } from "./types";
@@ -54,7 +53,6 @@ export const companyService = {
       
       if (error) throw error;
       
-      // Adapta o formato do Supabase para o formato esperado pelo frontend
       return (companies || []).map(company => ({
         id: company.id,
         fields: {
@@ -63,8 +61,8 @@ export const companyService = {
           "Estimated Revenue": company.estimated_revenue,
           Location: company.location,
           Status: company.status as CompanyStatus,
-          Rating: company.rating as CompanyRating,
-          ApprovalStatus: company.approval_status as CompanyApprovalStatus,
+          Rating: (company.rating || 'Not Rated') as CompanyRating,
+          ApprovalStatus: (company.approval_status || 'Under Review') as CompanyApprovalStatus,
           Website: company.website,
           Notes: company.notes,
           CreatedTime: company.created_at || new Date().toISOString()
@@ -88,7 +86,6 @@ export const companyService = {
       if (error) throw error;
       if (!company) throw new Error("Company not found");
       
-      // Adapta o formato do Supabase para o formato esperado pelo frontend
       return {
         id: company.id,
         fields: {
@@ -97,8 +94,8 @@ export const companyService = {
           "Estimated Revenue": company.estimated_revenue,
           Location: company.location,
           Status: company.status as CompanyStatus,
-          Rating: company.rating as CompanyRating,
-          ApprovalStatus: company.approval_status as CompanyApprovalStatus,
+          Rating: (company.rating || 'Not Rated') as CompanyRating,
+          ApprovalStatus: (company.approval_status || 'Under Review') as CompanyApprovalStatus,
           Website: company.website,
           Notes: company.notes,
           CreatedTime: company.created_at || new Date().toISOString()
@@ -113,7 +110,6 @@ export const companyService = {
 
   async createCompany(data: Partial<Company["fields"]>) {
     try {
-      // Converte o formato do frontend para o formato do Supabase
       const { data: company, error } = await supabase
         .from('companies')
         .insert({
@@ -135,7 +131,6 @@ export const companyService = {
       
       toast.success("Company created successfully");
       
-      // Retorna no formato esperado pelo frontend
       return {
         id: company.id,
         fields: {
@@ -144,8 +139,8 @@ export const companyService = {
           "Estimated Revenue": company.estimated_revenue,
           Location: company.location,
           Status: company.status as CompanyStatus,
-          Rating: company.rating as CompanyRating,
-          ApprovalStatus: company.approval_status as CompanyApprovalStatus,
+          Rating: (company.rating || 'Not Rated') as CompanyRating,
+          ApprovalStatus: (company.approval_status || 'Under Review') as CompanyApprovalStatus,
           Website: company.website,
           Notes: company.notes,
           CreatedTime: company.created_at || new Date().toISOString()
@@ -160,7 +155,6 @@ export const companyService = {
 
   async updateCompany(id: string, data: Partial<Company["fields"]>) {
     try {
-      // Converte o formato do frontend para o formato do Supabase
       const { data: company, error } = await supabase
         .from('companies')
         .update({
@@ -183,7 +177,6 @@ export const companyService = {
       
       toast.success("Company updated successfully");
       
-      // Retorna no formato esperado pelo frontend
       return {
         id: company.id,
         fields: {
@@ -192,8 +185,8 @@ export const companyService = {
           "Estimated Revenue": company.estimated_revenue,
           Location: company.location,
           Status: company.status as CompanyStatus,
-          Rating: company.rating as CompanyRating,
-          ApprovalStatus: company.approval_status as CompanyApprovalStatus,
+          Rating: (company.rating || 'Not Rated') as CompanyRating,
+          ApprovalStatus: (company.approval_status || 'Under Review') as CompanyApprovalStatus,
           Website: company.website,
           Notes: company.notes,
           CreatedTime: company.created_at || new Date().toISOString()

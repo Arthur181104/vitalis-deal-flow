@@ -37,14 +37,12 @@ export const statsService = {
         }
         
         // Count by rating
-        if (company.rating) {
-          ratingCounts[company.rating] = (ratingCounts[company.rating] || 0) + 1;
-        }
+        const rating = company.rating || 'Not Rated';
+        ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
         
         // Count by approval status
-        if (company.approval_status) {
-          approvalStatusCounts[company.approval_status] = (approvalStatusCounts[company.approval_status] || 0) + 1;
-        }
+        const approvalStatus = company.approval_status || 'Under Review';
+        approvalStatusCounts[approvalStatus] = (approvalStatusCounts[approvalStatus] || 0) + 1;
       });
       
       return {

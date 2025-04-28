@@ -11,36 +11,42 @@ export type Database = {
     Tables: {
       companies: {
         Row: {
+          approval_status: string | null
           created_at: string | null
           estimated_revenue: number | null
           id: string
           location: string | null
           name: string
           notes: string | null
+          rating: string | null
           sector: string
           status: string
           updated_at: string | null
           website: string | null
         }
         Insert: {
+          approval_status?: string | null
           created_at?: string | null
           estimated_revenue?: number | null
           id?: string
           location?: string | null
           name: string
           notes?: string | null
+          rating?: string | null
           sector: string
           status: string
           updated_at?: string | null
           website?: string | null
         }
         Update: {
+          approval_status?: string | null
           created_at?: string | null
           estimated_revenue?: number | null
           id?: string
           location?: string | null
           name?: string
           notes?: string | null
+          rating?: string | null
           sector?: string
           status?: string
           updated_at?: string | null
