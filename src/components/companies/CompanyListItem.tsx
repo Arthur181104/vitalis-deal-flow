@@ -2,6 +2,8 @@
 import { Company } from "@/lib/supabase";
 import { formatCurrency } from "@/lib/types";
 import StatusBadge from "@/components/shared/StatusBadge";
+import RatingBadge from "@/components/shared/RatingBadge";
+import ApprovalBadge from "@/components/shared/ApprovalBadge";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
@@ -21,26 +23,17 @@ const CompanyListItem = ({ company }: CompanyListItemProps) => {
         </Link>
       </TableCell>
       <TableCell>{fields.Sector}</TableCell>
-      <TableCell>{fields.Location || "-"}</TableCell>
+      <TableCell>
+        <RatingBadge rating={fields.Rating} />
+      </TableCell>
+      <TableCell>
+        <ApprovalBadge status={fields.ApprovalStatus} />
+      </TableCell>
       <TableCell>
         {formatCurrency(fields["Estimated Revenue"])}
       </TableCell>
       <TableCell>
         <StatusBadge status={fields.Status} />
-      </TableCell>
-      <TableCell>
-        {fields.Website ? (
-          <a 
-            href={fields.Website} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
-          >
-            View <ExternalLink className="h-3 w-3" />
-          </a>
-        ) : (
-          "-"
-        )}
       </TableCell>
     </TableRow>
   );

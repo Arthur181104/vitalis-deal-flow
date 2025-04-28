@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CompanyStatus } from "./types";
+import { CompanyStatus, CompanyRating, CompanyApprovalStatus } from "./types";
 import { Database } from "@/integrations/supabase/types";
 
 export interface Company {
@@ -12,6 +12,8 @@ export interface Company {
     "Estimated Revenue"?: number;
     Location?: string;
     Status: CompanyStatus;
+    Rating?: CompanyRating;
+    ApprovalStatus?: CompanyApprovalStatus;
     Website?: string;
     Notes?: string;
     CreatedTime: string;
@@ -61,6 +63,8 @@ export const companyService = {
           "Estimated Revenue": company.estimated_revenue,
           Location: company.location,
           Status: company.status as CompanyStatus,
+          Rating: company.rating as CompanyRating,
+          ApprovalStatus: company.approval_status as CompanyApprovalStatus,
           Website: company.website,
           Notes: company.notes,
           CreatedTime: company.created_at || new Date().toISOString()
@@ -93,6 +97,8 @@ export const companyService = {
           "Estimated Revenue": company.estimated_revenue,
           Location: company.location,
           Status: company.status as CompanyStatus,
+          Rating: company.rating as CompanyRating,
+          ApprovalStatus: company.approval_status as CompanyApprovalStatus,
           Website: company.website,
           Notes: company.notes,
           CreatedTime: company.created_at || new Date().toISOString()
@@ -116,6 +122,8 @@ export const companyService = {
           estimated_revenue: data["Estimated Revenue"],
           location: data.Location,
           status: data.Status || 'Contacted',
+          rating: data.Rating || 'Not Rated',
+          approval_status: data.ApprovalStatus || 'Under Review',
           website: data.Website,
           notes: data.Notes
         })
@@ -136,6 +144,8 @@ export const companyService = {
           "Estimated Revenue": company.estimated_revenue,
           Location: company.location,
           Status: company.status as CompanyStatus,
+          Rating: company.rating as CompanyRating,
+          ApprovalStatus: company.approval_status as CompanyApprovalStatus,
           Website: company.website,
           Notes: company.notes,
           CreatedTime: company.created_at || new Date().toISOString()
@@ -159,6 +169,8 @@ export const companyService = {
           estimated_revenue: data["Estimated Revenue"],
           location: data.Location,
           status: data.Status,
+          rating: data.Rating,
+          approval_status: data.ApprovalStatus,
           website: data.Website,
           notes: data.Notes
         })
@@ -180,6 +192,8 @@ export const companyService = {
           "Estimated Revenue": company.estimated_revenue,
           Location: company.location,
           Status: company.status as CompanyStatus,
+          Rating: company.rating as CompanyRating,
+          ApprovalStatus: company.approval_status as CompanyApprovalStatus,
           Website: company.website,
           Notes: company.notes,
           CreatedTime: company.created_at || new Date().toISOString()

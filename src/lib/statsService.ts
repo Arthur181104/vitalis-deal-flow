@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { CompanyStatus } from "./types";
+import { CompanyStatus, CompanyRating, CompanyApprovalStatus } from "./types";
 
 export const statsService = {
   async getDashboardStats() {
@@ -18,6 +18,12 @@ export const statsService = {
       // Calculate sector distribution
       const sectorDistribution: Record<string, number> = {};
       
+      // Calculate rating distribution
+      const ratingCounts: Record<string, number> = {};
+      
+      // Calculate approval status counts
+      const approvalStatusCounts: Record<string, number> = {};
+      
       // Process companies to build statistics
       (companies || []).forEach((company) => {
         // Count by status
@@ -29,19 +35,33 @@ export const statsService = {
         if (company.sector) {
           sectorDistribution[company.sector] = (sectorDistribution[company.sector] || 0) + 1;
         }
+        
+        // Count by rating
+        if (company.rating) {
+          ratingCounts[company.rating] = (ratingCounts[company.rating] || 0) + 1;
+        }
+        
+        // Count by approval status
+        if (company.approval_status) {
+          approvalStatusCounts[company.approval_status] = (approvalStatusCounts[company.approval_status] || 0) + 1;
+        }
       });
       
       return {
         totalCompanies: companies?.length || 0,
         statusCounts,
-        sectorDistribution
+        sectorDistribution,
+        ratingCounts,
+        approvalStatusCounts
       };
     } catch (error: any) {
       console.error("Error fetching dashboard stats:", error);
       return {
         totalCompanies: 0,
         statusCounts: {},
-        sectorDistribution: {}
+        sectorDistribution: {},
+        ratingCounts: {},
+        approvalStatusCounts: {}
       };
     }
   }

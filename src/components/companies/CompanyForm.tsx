@@ -23,7 +23,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Company, companyService } from "@/lib/supabase";
-import { SECTOR_OPTIONS, STATUS_OPTIONS, CompanyStatus } from "@/lib/types";
+import { 
+  SECTOR_OPTIONS, 
+  STATUS_OPTIONS, 
+  RATING_OPTIONS, 
+  APPROVAL_STATUS_OPTIONS,
+  CompanyStatus, 
+  CompanyRating, 
+  CompanyApprovalStatus 
+} from "@/lib/types";
 import { toast } from "sonner";
 
 // Company form schema
@@ -41,6 +49,12 @@ const companyFormSchema = z.object({
     "Archived"
   ], {
     required_error: "Status is required"
+  }),
+  Rating: z.enum(["A", "B", "C", "D", "Not Rated"], {
+    required_error: "Rating is required"
+  }),
+  ApprovalStatus: z.enum(["Approved", "Not Approved", "Under Review"], {
+    required_error: "Approval status is required"
   }),
   Website: z.string().url("Please enter a valid URL").or(z.string().length(0)).optional(),
   Notes: z.string().optional(),
@@ -65,6 +79,8 @@ const CompanyForm = ({ company, onSuccess }: CompanyFormProps) => {
     "Estimated Revenue": company?.fields["Estimated Revenue"]?.toString() || "",
     Location: company?.fields.Location || "",
     Status: company?.fields.Status || "Contacted",
+    Rating: company?.fields.Rating || "Not Rated",
+    ApprovalStatus: company?.fields.ApprovalStatus || "Under Review",
     Website: company?.fields.Website || "",
     Notes: company?.fields.Notes || "",
   };
@@ -84,7 +100,9 @@ const CompanyForm = ({ company, onSuccess }: CompanyFormProps) => {
         "Estimated Revenue": data["Estimated Revenue"] 
           ? parseInt(data["Estimated Revenue"], 10) 
           : undefined,
-        Status: data.Status as CompanyStatus
+        Status: data.Status as CompanyStatus,
+        Rating: data.Rating as CompanyRating,
+        ApprovalStatus: data.ApprovalStatus as CompanyApprovalStatus
       };
 
       let result;
@@ -222,6 +240,62 @@ const CompanyForm = ({ company, onSuccess }: CompanyFormProps) => {
                 <FormControl>
                   <Input placeholder="https://example.com" {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="Rating"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Rating*</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select rating" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {RATING_OPTIONS.map((rating) => (
+                      <SelectItem key={rating.value} value={rating.value}>
+                        {rating.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="ApprovalStatus"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Approval Status*</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select approval status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {APPROVAL_STATUS_OPTIONS.map((status) => (
+                      <SelectItem key={status.value} value={status.value}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

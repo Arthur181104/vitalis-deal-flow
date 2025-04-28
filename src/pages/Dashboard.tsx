@@ -10,7 +10,7 @@ import StatsCard from "@/components/shared/StatsCard";
 import { companyService } from "@/lib/supabase";
 import { statsService } from "@/lib/statsService";
 import { STATUS_OPTIONS } from "@/lib/types";
-import { Building2, TrendingUp, Users, Calendar } from "lucide-react";
+import { Building2, TrendingUp, Users, Calendar, Award, CheckCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
@@ -42,6 +42,16 @@ const Dashboard = () => {
   // Filter out archived companies for the dashboard counts
   const activeStatusCounts = stats?.statusCounts ? { ...stats.statusCounts } : {};
   
+  // Get approval stats
+  const approvedCount = stats?.approvalStatusCounts?.["Approved"] || 0;
+  const totalWithApprovalStatus = Object.values(stats?.approvalStatusCounts || {}).reduce((a, b) => a + b, 0);
+  const approvalRate = totalWithApprovalStatus ? Math.round((approvedCount / totalWithApprovalStatus) * 100) : 0;
+  
+  // Get rating stats
+  const aRatedCount = stats?.ratingCounts?.["A"] || 0;
+  const bRatedCount = stats?.ratingCounts?.["B"] || 0;
+  const topRatedCount = aRatedCount + bRatedCount;
+  
   return (
     <Layout>
       <PageHeader 
@@ -60,14 +70,14 @@ const Dashboard = () => {
         ))}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
         {/* Total companies stat */}
         <StatsCard
           title="Total Companies"
           value={stats?.totalCompanies || 0}
           icon={Building2}
           description="Companies in your pipeline"
-          className="bg-gradient-to-br from-primary-50 to-white dark:from-primary-950 dark:to-background"
+          className="bg-gradient-to-br from-primary-50 to-white dark:from-primary-950 dark:to-background md:col-span-1"
         />
         
         {/* Dynamic stats based on sector distribution */}
@@ -79,11 +89,11 @@ const Dashboard = () => {
             icon={TrendingUp}
             description={`${Object.entries(stats.sectorDistribution)
               .sort((a, b) => b[1] - a[1])[0][1]} companies`}
-            className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-950 dark:to-background"
+            className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-950 dark:to-background md:col-span-1"
           />
         )}
 
-        {/* Additional stats */}
+        {/* Recent Activity */}
         <StatsCard
           title="Recent Activity"
           value={companies?.length ? companies.filter(c => {
@@ -93,15 +103,34 @@ const Dashboard = () => {
           }).length : 0}
           icon={Calendar}
           description="New companies in the last 7 days"
-          className="bg-gradient-to-br from-green-50 to-white dark:from-green-950 dark:to-background"
+          className="bg-gradient-to-br from-green-50 to-white dark:from-green-950 dark:to-background md:col-span-1"
         />
 
+        {/* Team Stats */}
         <StatsCard
           title="Team Productivity"
           value={companies ? Math.round(companies.length / 3) : 0}
           icon={Users}
           description="Average companies per team member"
-          className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-background"
+          className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-background md:col-span-1"
+        />
+        
+        {/* Top Rated Companies */}
+        <StatsCard
+          title="Top Rated Companies"
+          value={topRatedCount}
+          icon={Award}
+          description={`A/B rated (${Math.round((topRatedCount / (stats?.totalCompanies || 1)) * 100)}%)`}
+          className="bg-gradient-to-br from-amber-50 to-white dark:from-amber-950 dark:to-background md:col-span-1"
+        />
+        
+        {/* Approval Rate */}
+        <StatsCard
+          title="Approval Rate"
+          value={`${approvalRate}%`}
+          icon={CheckCircle}
+          description={`${approvedCount} of ${totalWithApprovalStatus} approved`}
+          className="bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950 dark:to-background md:col-span-1"
         />
       </div>
       

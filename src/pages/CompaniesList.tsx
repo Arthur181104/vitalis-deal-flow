@@ -16,10 +16,12 @@ const CompaniesList = () => {
   const status = searchParams.get("status");
   const sector = searchParams.get("sector");
   const search = searchParams.get("search");
+  const rating = searchParams.get("rating");
+  const approval = searchParams.get("approval");
 
   // Fetch companies data
   const { data: companies, isLoading, error } = useQuery({
-    queryKey: ["companies", status, sector, search],
+    queryKey: ["companies", status, sector, search, rating, approval],
     queryFn: () => companyService.getCompanies(),
   });
 
@@ -30,11 +32,13 @@ const CompaniesList = () => {
     return companies.filter((company) => {
       const matchesStatus = !status || company.fields.Status === status;
       const matchesSector = !sector || company.fields.Sector === sector;
+      const matchesRating = !rating || company.fields.Rating === rating;
+      const matchesApproval = !approval || company.fields.ApprovalStatus === approval;
       const matchesSearch = !search || company.fields.Name.toLowerCase().includes(search.toLowerCase());
       
-      return matchesStatus && matchesSector && matchesSearch;
+      return matchesStatus && matchesSector && matchesRating && matchesApproval && matchesSearch;
     });
-  }, [companies, status, sector, search]);
+  }, [companies, status, sector, search, rating, approval]);
 
   // Sort companies by name
   const sortedCompanies = useMemo(() => {
@@ -79,7 +83,7 @@ const CompaniesList = () => {
         <div className="text-center py-12 bg-muted/20 rounded-lg">
           <h3 className="text-lg font-medium mb-2">No companies found</h3>
           <p className="text-muted-foreground mb-6">
-            {status || sector || search
+            {status || sector || search || rating || approval
               ? "Try adjusting your filters"
               : "Add your first company to get started"}
           </p>
@@ -91,10 +95,10 @@ const CompaniesList = () => {
               <TableRow>
                 <TableHead>Company Name</TableHead>
                 <TableHead>Sector</TableHead>
-                <TableHead>Location</TableHead>
+                <TableHead>Rating</TableHead>
+                <TableHead>Approval</TableHead>
                 <TableHead>Revenue</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Website</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

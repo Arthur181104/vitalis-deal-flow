@@ -5,12 +5,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/layout/Layout";
 import PageHeader from "@/components/shared/PageHeader";
 import StatusBadge from "@/components/shared/StatusBadge";
+import RatingBadge from "@/components/shared/RatingBadge";
+import ApprovalBadge from "@/components/shared/ApprovalBadge";
 import InteractionForm from "@/components/interactions/InteractionForm";
 import InteractionList from "@/components/interactions/InteractionList";
 import CommentForm from "@/components/comments/CommentForm";
 import CommentList from "@/components/comments/CommentList";
 import { companyService } from "@/lib/supabase";
-import { formatCurrency, STATUS_OPTIONS } from "@/lib/types";
+import { formatCurrency, STATUS_OPTIONS, RATING_OPTIONS, APPROVAL_STATUS_OPTIONS } from "@/lib/types";
 import {
   Tabs,
   TabsContent,
@@ -41,6 +43,8 @@ import {
   MessageSquare,
   FileText,
   Clock,
+  Award,
+  CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -107,6 +111,36 @@ const CompanyDetails = () => {
     }
   };
 
+  // Handle rating update
+  const handleRatingChange = async (newRating: string) => {
+    if (!id || !company) return;
+    try {
+      await companyService.updateCompany(id, { 
+        Rating: newRating as any 
+      });
+      queryClient.invalidateQueries({ queryKey: ["company", id] });
+      toast.success(`Rating updated to ${newRating}`);
+    } catch (error) {
+      console.error("Error updating rating:", error);
+      toast.error("Failed to update rating");
+    }
+  };
+
+  // Handle approval status update
+  const handleApprovalStatusChange = async (newStatus: string) => {
+    if (!id || !company) return;
+    try {
+      await companyService.updateCompany(id, { 
+        ApprovalStatus: newStatus as any 
+      });
+      queryClient.invalidateQueries({ queryKey: ["company", id] });
+      toast.success(`Approval status updated to ${newStatus}`);
+    } catch (error) {
+      console.error("Error updating approval status:", error);
+      toast.error("Failed to update approval status");
+    }
+  };
+
   if (isLoadingCompany) {
     return (
       <Layout>
@@ -150,23 +184,57 @@ const CompanyDetails = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{fields.Name}</h1>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center flex-wrap gap-2 mt-1">
             <StatusBadge status={fields.Status} />
+            <RatingBadge rating={fields.Rating} />
+            <ApprovalBadge status={fields.ApprovalStatus} />
             {fields.Sector && (
               <span className="text-sm text-muted-foreground">{fields.Sector}</span>
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Select 
             value={fields.Status} 
             onValueChange={handleStatusChange}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[150px]">
               <SelectValue placeholder="Change Status" />
             </SelectTrigger>
             <SelectContent>
               {STATUS_OPTIONS.map((status) => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <Select 
+            value={fields.Rating || "Not Rated"} 
+            onValueChange={handleRatingChange}
+          >
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Change Rating" />
+            </SelectTrigger>
+            <SelectContent>
+              {RATING_OPTIONS.map((rating) => (
+                <SelectItem key={rating.value} value={rating.value}>
+                  {rating.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <Select 
+            value={fields.ApprovalStatus || "Under Review"} 
+            onValueChange={handleApprovalStatusChange}
+          >
+            <SelectTrigger className="w-[170px]">
+              <SelectValue placeholder="Change Approval Status" />
+            </SelectTrigger>
+            <SelectContent>
+              {APPROVAL_STATUS_OPTIONS.map((status) => (
                 <SelectItem key={status.value} value={status.value}>
                   {status.label}
                 </SelectItem>
@@ -184,6 +252,47 @@ const CompanyDetails = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center">
+              <Award className="h-4 w-4 mr-2" />
+              Rating
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <RatingBadge rating={fields.Rating} className="text-base px-3 py-1" />
+              <span className="ml-2 text-sm text-muted-foreground">
+                {fields.Rating === "A" && "Excellent opportunity"}
+                {fields.Rating === "B" && "Good potential"}
+                {fields.Rating === "C" && "Average fit"}
+                {fields.Rating === "D" && "Poor match"}
+                {(!fields.Rating || fields.Rating === "Not Rated") && "Not yet rated"}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center">
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Approval Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <ApprovalBadge status={fields.ApprovalStatus} className="text-base px-3 py-1" />
+              <span className="ml-2 text-sm text-muted-foreground">
+                {fields.ApprovalStatus === "Approved" && "Ready to proceed"}
+                {fields.ApprovalStatus === "Not Approved" && "Not suitable for acquisition"}
+                {fields.ApprovalStatus === "Under Review" && "Currently being evaluated"}
+                {!fields.ApprovalStatus && "Pending review"}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+        
         {fields.Website && (
           <Card>
             <CardHeader className="pb-2">
@@ -204,7 +313,9 @@ const CompanyDetails = () => {
             </CardContent>
           </Card>
         )}
-        
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {fields.Location && (
           <Card>
             <CardHeader className="pb-2">
@@ -232,6 +343,18 @@ const CompanyDetails = () => {
             </CardContent>
           </Card>
         )}
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center">
+              <Building2 className="h-4 w-4 mr-2" />
+              Sector
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {fields.Sector}
+          </CardContent>
+        </Card>
       </div>
 
       {fields.Notes && (
