@@ -19,10 +19,20 @@ export const statsService = {
       const sectorDistribution: Record<string, number> = {};
       
       // Calculate rating distribution
-      const ratingCounts: Record<string, number> = {};
+      const ratingCounts: Record<string, number> = {
+        'A': 0,
+        'B': 0,
+        'C': 0,
+        'D': 0,
+        'Not Rated': 0
+      };
       
       // Calculate approval status counts
-      const approvalStatusCounts: Record<string, number> = {};
+      const approvalStatusCounts: Record<string, number> = {
+        'Approved': 0,
+        'Not Approved': 0,
+        'Under Review': 0
+      };
       
       // Process companies to build statistics
       (companies || []).forEach((company) => {
@@ -58,8 +68,18 @@ export const statsService = {
         totalCompanies: 0,
         statusCounts: {},
         sectorDistribution: {},
-        ratingCounts: {},
-        approvalStatusCounts: {}
+        ratingCounts: {
+          'A': 0,
+          'B': 0,
+          'C': 0,
+          'D': 0,
+          'Not Rated': 0
+        },
+        approvalStatusCounts: {
+          'Approved': 0,
+          'Not Approved': 0,
+          'Under Review': 0
+        }
       };
     }
   }
