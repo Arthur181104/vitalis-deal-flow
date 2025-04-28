@@ -99,6 +99,7 @@ const CompaniesList = () => {
                 <TableHead>Approval</TableHead>
                 <TableHead>Revenue</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead className="w-[50px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
