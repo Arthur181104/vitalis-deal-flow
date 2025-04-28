@@ -11,8 +11,9 @@ import InteractionForm from "@/components/interactions/InteractionForm";
 import InteractionList from "@/components/interactions/InteractionList";
 import CommentForm from "@/components/comments/CommentForm";
 import CommentList from "@/components/comments/CommentList";
+import CompanyTabs from "@/components/companies/CompanyTabs";
 import { companyService } from "@/lib/supabase";
-import { formatCurrency, STATUS_OPTIONS, RATING_OPTIONS, APPROVAL_STATUS_OPTIONS } from "@/lib/types";
+import { formatDate, STATUS_OPTIONS, RATING_OPTIONS, APPROVAL_STATUS_OPTIONS } from "@/lib/types";
 import {
   Tabs,
   TabsContent,
@@ -34,27 +35,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Globe,
-  MapPin,
-  Building2,
-  DollarSign,
   Pencil,
   ArrowLeft,
   MessageSquare,
   FileText,
   Clock,
-  Award,
-  CheckCircle,
+  Trash2,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const CompanyDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   // Fetch company details
   const { 
@@ -76,7 +84,6 @@ const CompanyDetails = () => {
     queryKey: ["interactions", id],
     queryFn: async () => {
       // This function will need to be implemented in the interactions service
-      // For now, let's return an empty array to avoid errors
       return [];
     },
     enabled: !!id,
@@ -90,7 +97,6 @@ const CompanyDetails = () => {
     queryKey: ["comments", id],
     queryFn: async () => {
       // This function will need to be implemented in the comments service
-      // For now, let's return an empty array to avoid errors
       return [];
     },
     enabled: !!id,
@@ -141,6 +147,24 @@ const CompanyDetails = () => {
     }
   };
 
+  // Handle company deletion
+  const handleDeleteCompany = async () => {
+    if (!id) return;
+    
+    try {
+      setIsDeleting(true);
+      await companyService.deleteCompany(id);
+      setIsDeleteDialogOpen(false);
+      toast.success("Company deleted successfully");
+      navigate("/companies");
+    } catch (error) {
+      console.error("Error deleting company:", error);
+      toast.error("Failed to delete company");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (isLoadingCompany) {
     return (
       <Layout>
@@ -169,6 +193,9 @@ const CompanyDetails = () => {
   }
 
   const { fields } = company;
+  const lastUpdated = fields.CreatedTime 
+    ? new Date(fields.CreatedTime)
+    : new Date();
 
   return (
     <Layout>
@@ -181,7 +208,7 @@ const CompanyDetails = () => {
         Back to Companies
       </Button>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{fields.Name}</h1>
           <div className="flex items-center flex-wrap gap-2 mt-1">
@@ -191,6 +218,10 @@ const CompanyDetails = () => {
             {fields.Sector && (
               <span className="text-sm text-muted-foreground">{fields.Sector}</span>
             )}
+          </div>
+          <div className="text-xs text-muted-foreground mt-2 flex items-center">
+            <Calendar className="h-3 w-3 mr-1" />
+            Last updated: {formatDate(lastUpdated.toISOString())}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -248,114 +279,18 @@ const CompanyDetails = () => {
               Edit
             </a>
           </Button>
+          <Button 
+            variant="destructive" 
+            onClick={() => setIsDeleteDialogOpen(true)}
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete
+          </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <Award className="h-4 w-4 mr-2" />
-              Rating
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <RatingBadge rating={fields.Rating} className="text-base px-3 py-1" />
-              <span className="ml-2 text-sm text-muted-foreground">
-                {fields.Rating === "A" && "Excellent opportunity"}
-                {fields.Rating === "B" && "Good potential"}
-                {fields.Rating === "C" && "Average fit"}
-                {fields.Rating === "D" && "Poor match"}
-                {(!fields.Rating || fields.Rating === "Not Rated") && "Not yet rated"}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Approval Status
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <ApprovalBadge status={fields.ApprovalStatus} className="text-base px-3 py-1" />
-              <span className="ml-2 text-sm text-muted-foreground">
-                {fields.ApprovalStatus === "Approved" && "Ready to proceed"}
-                {fields.ApprovalStatus === "Not Approved" && "Not suitable for acquisition"}
-                {fields.ApprovalStatus === "Under Review" && "Currently being evaluated"}
-                {!fields.ApprovalStatus && "Pending review"}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {fields.Website && (
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <Globe className="h-4 w-4 mr-2" />
-                Website
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <a 
-                href={fields.Website} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:underline break-all"
-              >
-                {fields.Website}
-              </a>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {fields.Location && (
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <MapPin className="h-4 w-4 mr-2" />
-                Location
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {fields.Location}
-            </CardContent>
-          </Card>
-        )}
-        
-        {fields["Estimated Revenue"] !== undefined && (
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Estimated Revenue
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {formatCurrency(fields["Estimated Revenue"])}
-            </CardContent>
-          </Card>
-        )}
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <Building2 className="h-4 w-4 mr-2" />
-              Sector
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {fields.Sector}
-          </CardContent>
-        </Card>
-      </div>
+      {/* Company Tabs Component */}
+      <CompanyTabs company={company} />
 
       {fields.Notes && (
         <Card className="mb-8">
@@ -439,6 +374,32 @@ const CompanyDetails = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this company?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the company
+              record from the database.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDeleteCompany();
+              }}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Deleting..." : "Delete Company"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 };
