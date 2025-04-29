@@ -33,7 +33,7 @@ const CompanyListItem = ({ company }: CompanyListItemProps) => {
     try {
       await companyService.deleteCompany(id);
       // Invalidate and refetch companies data after deletion
-      queryClient.invalidateQueries(["companies"]);
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
     } catch (error) {
       console.error("Error deleting company:", error);
     }

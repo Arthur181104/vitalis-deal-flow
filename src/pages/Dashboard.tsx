@@ -1,37 +1,27 @@
 
-import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/layout/Layout";
 import PageHeader from "@/components/shared/PageHeader";
-import DealStageCard from "@/components/dashboard/DealStageCard";
-import PipelineChart from "@/components/dashboard/PipelineChart";
-import RecentCompanies from "@/components/dashboard/RecentCompanies";
-import StatsCard from "@/components/shared/StatsCard";
 import { companyService } from "@/lib/supabase";
-import { statsService } from "@/lib/statsService";
-import { STATUS_OPTIONS } from "@/lib/types";
-import { Building2, TrendingUp, Users, Calendar, Award, CheckCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Building2, ClipboardCheck } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
-  // Fetch dashboard statistics
-  const { data: stats, isLoading: isLoadingStats } = useQuery({
-    queryKey: ["dashboardStats"],
-    queryFn: statsService.getDashboardStats,
-  });
-
-  // Fetch companies for the recent companies list
-  const { data: companies, isLoading: isLoadingCompanies } = useQuery({
+  // Fetch companies data
+  const { data: companies, isLoading } = useQuery({
     queryKey: ["companies"],
     queryFn: () => companyService.getCompanies(),
   });
 
-  if (isLoadingStats || isLoadingCompanies) {
+  if (isLoading) {
     return (
       <Layout>
-        <PageHeader title="Dashboard" description="Overview of your deal flow" />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
-          {Array(5).fill(0).map((_, i) => (
+        <PageHeader title="Dashboard" description="Company Management Overview" />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array(3).fill(0).map((_, i) => (
             <Skeleton key={i} className="h-32 w-full" />
           ))}
         </div>
@@ -39,107 +29,134 @@ const Dashboard = () => {
     );
   }
 
-  // Filter out archived companies for the dashboard counts
-  const activeStatusCounts = stats?.statusCounts ? { ...stats.statusCounts } : {};
+  // Count companies by rating
+  const ratingCounts = companies?.reduce((acc, company) => {
+    const rating = company.fields.Rating || "Not Rated";
+    acc[rating] = (acc[rating] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>) || {};
+
+  // Count companies by approval status
+  const approvalCounts = companies?.reduce((acc, company) => {
+    const status = company.fields.ApprovalStatus || "Under Review";
+    acc[status] = (acc[status] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>) || {};
   
-  // Get approval stats
-  const approvedCount = stats?.approvalStatusCounts?.["Approved"] || 0;
-  const totalWithApprovalStatus = Object.values(stats?.approvalStatusCounts || {}).reduce((a, b) => a + b, 0);
-  const approvalRate = totalWithApprovalStatus ? Math.round((approvedCount / totalWithApprovalStatus) * 100) : 0;
-  
-  // Get rating stats
-  const aRatedCount = stats?.ratingCounts?.["A"] || 0;
-  const bRatedCount = stats?.ratingCounts?.["B"] || 0;
-  const topRatedCount = aRatedCount + bRatedCount;
-  
+  // Get total count
+  const totalCompanies = companies?.length || 0;
+
   return (
     <Layout>
       <PageHeader 
-        title="Dashboard" 
-        description="Overview of your deal flow"
+        title="Company Management Dashboard" 
+        description="Strategic evaluation and investment decision-making"
+        action={{
+          label: "Add Company",
+          icon: Building2,
+          href: "/companies/new",
+        }}
       />
       
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5 mb-8">
-        {/* Deal stage cards */}
-        {STATUS_OPTIONS.filter(status => status.value !== "Archived").map((status) => (
-          <DealStageCard
-            key={status.value}
-            status={status.value}
-            count={activeStatusCounts[status.value] || 0}
-          />
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {/* Total Companies */}
+        <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-background">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Total Companies</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <span className="text-3xl font-bold">{totalCompanies}</span>
+              <Building2 className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Companies under evaluation</p>
+          </CardContent>
+        </Card>
+        
+        {/* Rating Distribution */}
+        <Card className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-950 dark:to-background">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Top Rated (A/B)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <span className="text-3xl font-bold">{(ratingCounts["A"] || 0) + (ratingCounts["B"] || 0)}</span>
+              <ClipboardCheck className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              A: {ratingCounts["A"] || 0}, B: {ratingCounts["B"] || 0}
+            </p>
+          </CardContent>
+        </Card>
+        
+        {/* Approval Distribution */}
+        <Card className="bg-gradient-to-br from-green-50 to-white dark:from-green-950 dark:to-background">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Approval Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <span className="text-3xl font-bold">{approvalCounts["Approved"] || 0}</span>
+              <ClipboardCheck className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Approved: {approvalCounts["Approved"] || 0}, 
+              Under Review: {approvalCounts["Under Review"] || 0}, 
+              Not Approved: {approvalCounts["Not Approved"] || 0}
+            </p>
+          </CardContent>
+        </Card>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
-        {/* Total companies stat */}
-        <StatsCard
-          title="Total Companies"
-          value={stats?.totalCompanies || 0}
-          icon={Building2}
-          description="Companies in your pipeline"
-          className="bg-gradient-to-br from-primary-50 to-white dark:from-primary-950 dark:to-background md:col-span-1"
-        />
-        
-        {/* Dynamic stats based on sector distribution */}
-        {stats?.sectorDistribution && Object.keys(stats.sectorDistribution).length > 0 && (
-          <StatsCard
-            title="Top Sector"
-            value={Object.entries(stats.sectorDistribution)
-              .sort((a, b) => b[1] - a[1])[0][0]}
-            icon={TrendingUp}
-            description={`${Object.entries(stats.sectorDistribution)
-              .sort((a, b) => b[1] - a[1])[0][1]} companies`}
-            className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-950 dark:to-background md:col-span-1"
-          />
-        )}
 
-        {/* Recent Activity */}
-        <StatsCard
-          title="Recent Activity"
-          value={companies?.length ? companies.filter(c => {
-            const date = new Date(c.fields.CreatedTime);
-            const now = new Date();
-            return now.getTime() - date.getTime() < 1000 * 60 * 60 * 24 * 7; // 7 days
-          }).length : 0}
-          icon={Calendar}
-          description="New companies in the last 7 days"
-          className="bg-gradient-to-br from-green-50 to-white dark:from-green-950 dark:to-background md:col-span-1"
-        />
-
-        {/* Team Stats */}
-        <StatsCard
-          title="Team Productivity"
-          value={companies ? Math.round(companies.length / 3) : 0}
-          icon={Users}
-          description="Average companies per team member"
-          className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-950 dark:to-background md:col-span-1"
-        />
-        
-        {/* Top Rated Companies */}
-        <StatsCard
-          title="Top Rated Companies"
-          value={topRatedCount}
-          icon={Award}
-          description={`A/B rated (${Math.round((topRatedCount / (stats?.totalCompanies || 1)) * 100)}%)`}
-          className="bg-gradient-to-br from-amber-50 to-white dark:from-amber-950 dark:to-background md:col-span-1"
-        />
-        
-        {/* Approval Rate */}
-        <StatsCard
-          title="Approval Rate"
-          value={`${approvalRate}%`}
-          icon={CheckCircle}
-          description={`${approvedCount} of ${totalWithApprovalStatus} approved`}
-          className="bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950 dark:to-background md:col-span-1"
-        />
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Pipeline chart */}
-        <PipelineChart data={stats?.statusCounts || {}} />
-        
-        {/* Recent companies */}
-        {companies && <RecentCompanies companies={companies} />}
+      <div className="grid grid-cols-1 gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Company Ranking</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {companies && companies.length > 0 ? (
+              <div className="space-y-4">
+                {/* Sort companies by rating (A → D) */}
+                {companies
+                  .filter(c => c.fields.Rating && c.fields.Rating !== "Not Rated")
+                  .sort((a, b) => {
+                    const ratingA = a.fields.Rating || "Not Rated";
+                    const ratingB = b.fields.Rating || "Not Rated";
+                    return ratingA.localeCompare(ratingB);
+                  })
+                  .slice(0, 5)
+                  .map((company) => (
+                    <div 
+                      key={company.id} 
+                      className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white bg-${company.fields.Rating === 'A' ? 'green' : company.fields.Rating === 'B' ? 'blue' : company.fields.Rating === 'C' ? 'yellow' : company.fields.Rating === 'D' ? 'red' : 'gray'}-600`}>
+                          {company.fields.Rating}
+                        </div>
+                        <span className="font-medium">{company.fields.Name}</span>
+                      </div>
+                      <Button asChild variant="ghost" size="sm">
+                        <Link to={`/companies/${company.id}`}>View</Link>
+                      </Button>
+                    </div>
+                  ))}
+                <div className="flex justify-center mt-4">
+                  <Button asChild variant="outline">
+                    <Link to="/companies">View All Companies</Link>
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground mb-4">No companies rated yet</p>
+                <Button asChild>
+                  <Link to="/companies/new">Add Your First Company</Link>
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );

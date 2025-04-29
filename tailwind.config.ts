@@ -18,6 +18,17 @@ export default {
 				'2xl': '1400px'
 			}
 		},
+		fontFamily: {
+			sans: [
+				'-apple-system',
+				'BlinkMacSystemFont',
+				'San Francisco',
+				'Helvetica Neue',
+				'Helvetica',
+				'Arial',
+				'sans-serif'
+			]
+		},
 		extend: {
 			colors: {
 				border: 'hsl(var(--border))',
@@ -65,12 +76,12 @@ export default {
 				},
 				// Status colors
 				status: {
-					'contacted': '#9b87f5',     // Primary Purple
-					'in-analysis': '#1EAEDB',  // Bright Blue
-					'loi-sent': '#FDE1D3',     // Soft Peach
-					'due-diligence': '#E5DEFF', // Soft Purple
-					'closed': '#7E69AB',       // Secondary Purple
-					'archived': '#8E9196',     // Neutral Gray
+					'contacted': '#9b87f5',
+					'in-analysis': '#1EAEDB',
+					'loi-sent': '#FDE1D3',
+					'due-diligence': '#E5DEFF',
+					'closed': '#7E69AB',
+					'archived': '#8E9196',
 				}
 			},
 			borderRadius: {
@@ -110,6 +121,10 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
+			},
+			boxShadow: {
+				'apple': '0 4px 12px rgba(0, 0, 0, 0.08)',
+				'apple-hover': '0 8px 20px rgba(0, 0, 0, 0.12)',
 			}
 		}
 	},

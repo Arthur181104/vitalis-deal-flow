@@ -8,7 +8,6 @@ import Dashboard from "./pages/Dashboard";
 import CompaniesList from "./pages/CompaniesList";
 import CompanyDetails from "./pages/CompanyDetails";
 import CompanyForm from "./pages/CompanyForm";
-import Statistics from "./pages/Statistics";
 import NotFound from "./pages/NotFound";
 
 // Create a client
@@ -39,9 +38,6 @@ const App = () => (
           <Route path="/companies/new" element={<CompanyForm />} />
           <Route path="/companies/edit/:id" element={<CompanyForm />} />
           <Route path="/companies/:id" element={<CompanyDetails />} />
-          
-          {/* Statistics */}
-          <Route path="/statistics" element={<Statistics />} />
           
           {/* 404 page */}
           <Route path="*" element={<NotFound />} />
